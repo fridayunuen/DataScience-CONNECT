@@ -48,9 +48,6 @@ def path_of_file(file_name):
     path = os.path.dirname(os.path.abspath(file_name))
     return path
 
-
-path_ini = r'''C:\Users\jcarpinteyro\OneDrive - SERVICIOS SHASA S DE RL DE CV\Fotografías Subir Pagina'''
-
 path_fin_beauty = r'''I:\BEAUTY'''
 path_fin_jew = r'''I:\JEW'''
 path_fin_acc = r'''I:\ACC'''
@@ -60,8 +57,7 @@ path_fin_sho = r'''I:\SHO'''
 dic_path_fin = {'BEAUTY':path_fin_beauty, 'JEW':path_fin_jew, 'ACC':path_fin_acc, 'CLO':path_fin_clo, 'SHO':path_fin_sho}
 
 
-'''
-# list all rare characters in all images
+'''# list all rare characters in all images
 ls_rare_chars = []
 for img in ls_imgs:
     rarechar = find_rare_characters(img)
@@ -93,6 +89,5 @@ def rename_images_rarechars(path):
             
 
 #path_ini = r'''C:\Users\fcolin\SERVICIOS SHASA S DE RL DE CV\Administrador - Fotografías Subir Pagina\2022\ACCES Y CALZADO\2022-08-19 ACCES'''
-
 #rename_images_rarechars(path=path_ini)
 

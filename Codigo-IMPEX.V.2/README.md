@@ -1,0 +1,3 @@
+El propósito de este programa es generar dos archivos en formato impex para subir fotografías a SAP commerce, tomando como input el archivo de excel ItemsGenerar.xlsx el cual conteine los códigos de los productos que se desea subir, hace un mapea de lo que existe en el drive de fotografía y en las bases de datos para ver sus tallas si es el caso. El output son los dos archivos impex y un zip con las fotografías en los tamaños que se requieren, es por eso que existen varios auxiliares py con el que se verfican. 
+
+* Se plantea seguir desarrollandolo, si es posible hacer una conexion directa con SAP o de no ser posible intentar con webscrapping. 

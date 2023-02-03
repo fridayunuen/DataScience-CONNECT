@@ -1,0 +1,21 @@
+$productCatalog=shasaProductCatalog
+$productCatalogName=shasaProductCatalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Online'])[unique=true,default=$productCatalog:Online]
+$media=@media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator]
+$medias=medias(code, $catalogVersion)
+$picture=picture(code, $catalogVersion)
+$galleryImages=galleryImages(qualifier, $catalogVersion)
+$thumbnail=thumbnail(code, $catalogVersion)
+$thumbnails=thumbnails(code, $catalogVersion)
+$detail=detail(code, $catalogVersion)
+$normal=normal(code, $catalogVersion)
+$others=others(code, $catalogVersion)
+$data_sheet=data_sheet(code, $catalogVersion)
+$individualPhotos=individualPhotos(code, $catalogVersion)
+INSERT_UPDATE Product;code[unique=true];$picture;$thumbnail;$detail;$others;$normal;$thumbnails;$galleryImages;$catalogVersion
+;2115592_028;/1/1200Wx1200H/2115592028;/1/96Wx96H/2115592028;/1/300Wx300H/2115592028;/1/515Wx515H/2115592028;/1/65Wx65H/2115592028;/1/30Wx30H/2115592028;21155920281,21155920282,21155920283;
+;2115592_028000;/1/1200Wx1200H/2115592028;/1/96Wx96H/2115592028;/1/300Wx300H/2115592028;/1/515Wx515H/2115592028;/1/65Wx65H/2115592028;/1/30Wx30H/2115592028;21155920281,21155920282,21155920283;
+;2115592_028;/2/1200Wx1200H/2115592028;/2/96Wx96H/2115592028;/2/300Wx300H/2115592028;/2/515Wx515H/2115592028;/2/65Wx65H/2115592028;/2/30Wx30H/2115592028;21155920281,21155920282,21155920283;
+;2115592_028000;/2/1200Wx1200H/2115592028;/2/96Wx96H/2115592028;/2/300Wx300H/2115592028;/2/515Wx515H/2115592028;/2/65Wx65H/2115592028;/2/30Wx30H/2115592028;21155920281,21155920282,21155920283;
+;2115592_028;/3/1200Wx1200H/2115592028;/3/96Wx96H/2115592028;/3/300Wx300H/2115592028;/3/515Wx515H/2115592028;/3/65Wx65H/2115592028;/3/30Wx30H/2115592028;21155920281,21155920282,21155920283;
+;2115592_028000;/3/1200Wx1200H/2115592028;/3/96Wx96H/2115592028;/3/300Wx300H/2115592028;/3/515Wx515H/2115592028;/3/65Wx65H/2115592028;/3/30Wx30H/2115592028;21155920281,21155920282,21155920283;

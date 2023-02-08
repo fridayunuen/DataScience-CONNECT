@@ -139,6 +139,22 @@ def list_items_in_directory(mainpath):
                 items.append(item)
     return items
 
+def get_size(mainpath):
+    '''This function returns the size of a file in MB.'''
+    size = os.path.getsize(mainpath)
+    #size = size / 1024 / 1024
+    return size
+
+def get_type(mainpath):
+    '''Tis function returns the type of a file.'''
+    # get the last part of the path after the last dot
+    suffix = mainpath.split('.')[-1]
+    # if the suffix is jpg, jpeg or jpe, then the type is jpg
+
+
+    #type = imghdr.what(mainpath)
+    return suffix
+
 def map_files(mainpath, saveas):
     '''
     This function maps the files in a directory and subdirectories and 
@@ -150,6 +166,8 @@ def map_files(mainpath, saveas):
   
    
     ls_filefullnames, ls_filenames, ls_paths, ls_creation_dates, ls_skus, ls_suffixes, ls_versions = [], [], [], [], [], [], []
+    ls_sizes = []
+    ls_types = []
     f = 0
     for root, dirs, files in os.walk(mainpath):
         for file in files:
@@ -163,7 +181,17 @@ def map_files(mainpath, saveas):
             ls_skus.append(extract_sku(file))
             ls_suffixes.append(extract_suffix(file))
             ls_versions.append(extract_version(file))
-    
+            
+            ls_types.append(get_type(file))
+            #print(os.path.join(root, file))
+            try:
+                
+                ls_sizes.append(get_size(os.path.join(root, file)))
+            except:
+                ls_sizes.append('0')
+
+                
+        
     ls_paths = [path[len(mainpath):] for path in ls_paths]
 
     ls_creation_dates = [datetime.datetime.fromtimestamp(x) for x in ls_creation_dates]
@@ -171,7 +199,7 @@ def map_files(mainpath, saveas):
     ptitle('  Mapeando archivos de fotos')
     print(' - Items escaneados correctamente')
     print(' - Guardando archivo de mapeo de items...')
-    dic_files = {'filefullname':ls_filefullnames, 'filename':ls_filenames, 'path':ls_paths, 'creation_date':ls_creation_dates, 'sku':ls_skus, 'suffix':ls_suffixes, 'version':ls_versions}
+    dic_files = {'filefullname':ls_filefullnames, 'filename':ls_filenames, 'path':ls_paths, 'creation_date':ls_creation_dates, 'sku':ls_skus, 'suffix':ls_suffixes, 'version':ls_versions, 'size':ls_sizes, 'type':ls_types}
     df_files = pd.DataFrame(dic_files)
     df_files['key'] = df_files['sku'] + '_' + df_files['suffix']
     df_files['ropa'] = df_files['path'].apply(lambda x: find_bu_in_string(x, 'ropa'))
@@ -180,7 +208,7 @@ def map_files(mainpath, saveas):
     df_files['rca'] = df_files.apply(lambda x: x['ropa'] + x['calzado'] + x['accesorios'], axis=1)
     df_files['BU'] = df_files.apply(lambda x: find_unique_bu(x), axis=1)
 
-    ls_cols = ['key', 'creation_date', 'path', 'filename', 'sku', 'suffix', 'version', 'BU']
+    ls_cols = ['key', 'creation_date', 'path', 'filename', 'sku', 'suffix', 'version', 'BU', 'size', 'type']
     df_files = df_files[ls_cols]
     # order by creation date
     df_files = df_files.sort_values(by=['creation_date'], ascending=False)

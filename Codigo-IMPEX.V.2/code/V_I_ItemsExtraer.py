@@ -55,7 +55,8 @@ items = pd.unique(items)
 
 # 8 
 if os.path.exists(Dir.carpeta_intupt + '\Mapping.csv'):
-    mapping = pd.read_csv(Dir.carpeta_intupt + '\Mapping.csv')
+    #mapping = pd.read_csv(Dir.carpeta_intupt + '\Mapping.csv')
+    mapping = pd.read_csv('S:\OMNI\HerramientasCode\MappingDiario\Mapping.csv')
     fecha_creacion = time.ctime(os.path.getmtime(Dir.carpeta_intupt + '\Mapping.csv'))
     print("El archivo Mapping.csv fue modificado en: ", fecha_creacion)
 else:

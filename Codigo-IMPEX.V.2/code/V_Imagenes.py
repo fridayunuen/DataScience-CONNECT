@@ -13,7 +13,8 @@ import Directory as Dir
 os.chdir(Dir.carpeta_intupt)
 
 path_fotos = open('path.txt', 'r').readline()
-Mapping = pd.read_csv('Mapping.csv')
+#Mapping = pd.read_csv('Mapping.csv')
+Mapping = pd.read_csv('S:\OMNI\HerramientasCode\MappingDiario\Mapping.csv')
 
 
 os.chdir(path_fotos)

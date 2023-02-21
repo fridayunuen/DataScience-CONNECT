@@ -77,11 +77,22 @@ engine = create_engine(connection_url)
 conn = engine.connect()
 
 # query to get the data
-query = '''SELECT  [Original Vendor Item No_]
-      ,[No_]
-      ,[Variant Code]
-      ,[Date Created]
-  FROM [Allocations].[dbo].[Item_BC]'''
+#query = '''SELECT  [Original Vendor Item No_]
+#      ,[No_]
+#      ,[Variant Code]
+#      --,[Date Created]
+#  FROM [Allocations].[dbo].[Item_BC_v2]'''
+
+
+query = '''
+SELECT 
+ [Item No_] AS [Original Vendor Item No_]
+,[Item No_] AS [No_]
+,[Variant Code] AS [Variant Code]
+FROM [Flash_BC].[dbo].[PP_Shasacom]
+WHERE LEN([Item No_]) = 7 
+ORDER BY [Item No_] DESC'''
+
 
 # create a dataframe with the query
 try:
@@ -89,7 +100,7 @@ try:
     df_query_items = pd.read_sql_query(query, conn)
 
     # order by date
-    df_query_items = df_query_items.sort_values(by=['Date Created'], ascending=False)
+    #df_query_items = df_query_items.sort_values(by=['Date Created'], ascending=False)
 
 
     df_query_items['sku'] = ''

@@ -220,7 +220,7 @@ def map_files(mainpath, saveas):
 '''
 
 #path_fotos = open('path.txt', 'r').readline()
-path_fotos = r'C:\Users\Dev_allo\OneDrive - SERVICIOS SHASA S DE RL DE CV\Fotografias Ecommerce\Fotografías Subir Pagina'
+path_fotos = r'C:\Users\fcolin\OneDrive - SERVICIOS SHASA S DE RL DE CV\CONNECT'
 
 #mapping = os.getcwd()
 #path_out = r'''C:\Users\fcolin\Documents\GitHub\Codigo-IMPEX.V.2\out'''

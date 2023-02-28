@@ -8,7 +8,7 @@ import aux_mapping_items as aux
 
 dest_file =       r'C:\Users\fcolin\Desktop\input\files'
 dir_credenciales = r'C:\Users\fcolin\Desktop\input'
-path_drive = r'C:\Users\fcolin\SERVICIOS SHASA S DE RL DE CV\Administrador - Fotografías Subir Pagina'
+path_drive = r'C:\Users\fcolin\OneDrive - SERVICIOS SHASA S DE RL DE CV\CONNECT'
 
 carpeta_code = os.getcwd()
 carpeta_input  =carpeta_code.replace('code', 'input')

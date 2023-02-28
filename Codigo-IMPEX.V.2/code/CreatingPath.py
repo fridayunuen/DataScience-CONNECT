@@ -6,8 +6,9 @@ user = os.getlogin()
 
 #opcion1 = r"C:\\Users\\"+user+r"\\SERVICIOS SHASA S DE RL DE CV\Administrador - Fotografías Subir Pagina\\CONNECT\\TODOS_LOS_TAMANOS"
 
-opcion1  = r"C:\Users\fcolin\OneDrive - SERVICIOS SHASA S DE RL DE CV\Fotografías Subir Pagina\CONNECT\TODOS_LOS_TAMANOS"
-opcion2 = r"C:\\Users\\"+user+r"\\OneDrive - SERVICIOS SHASA S DE RL DE CV\\Fotografías Subir Pagina\\CONNECT\\TODOS_LOS_TAMANOS"
+opcion1  = r"C:\\Users\\"+ user +r"\\OneDrive - SERVICIOS SHASA S DE RL DE CV\\CONNECT\\TODOS_LOS_TAMANOS"
+opcion2 = r"C:\Users\f\OneDrive - SERVICIOS SHASA S DE RL DE CV\CONNECT\TODOS_LOS_TAMANOS"
+
 
 os.chdir(Dir.carpeta_intupt)
 if os.path.exists(opcion1):

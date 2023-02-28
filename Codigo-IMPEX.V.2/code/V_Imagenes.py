@@ -50,7 +50,7 @@ for imagen in imagenes_nombre:
     if W in necesario1 and H in necesario2:
         pass
     else:
-        print("Eliminando del mapping " + imagen)
+        #print("Eliminando del mapping " + imagen)
         if imagen in Mapping['filename'].values:
             Mapping.drop(Mapping[Mapping['filename'] == imagen].index, inplace=True)
 

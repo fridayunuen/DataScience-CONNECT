@@ -1,6 +1,8 @@
 import os
+import pandas as pd
 
 try:
+    
     pd.read_excel(r'S:\OMNI\HerramientasCode\MappingDiario\Reportes\ProductosGeneradosImpex.xlsx')
     print('Reporte historico existe')
 except:
@@ -10,7 +12,6 @@ except:
 
 import impex 
 import V_Imagenes as vi
-import pandas as pd
 
 import V_I_ItemsExtraer as vie
 import Directory as Dir

@@ -1,31 +1,36 @@
 import os
 import pandas as pd
+import time
+from tkinter import Tk
+from tkinter.filedialog import askopenfilename
+import aux_mapping_items as aux
+
 
 path = os.getcwd()
 path_input = path.replace("code", "input")
 
 path_contrasenas = r'C:\Users\fcolin\Desktop\input\CredencialesConnect.json'
-path_sap_reporte = r'S:\OMNI\HerramientasCode\MappingDiario\input'
+#path_sap_reporte = r'S:\OMNI\HerramientasCode\MappingDiario\input'
 path_code = os.getcwd()
 path_output = path_code.replace("code", "output")
 # select a file with an interactive dialog
-from tkinter import Tk
-from tkinter.filedialog import askopenfilename
 
-# select a file with an interactive dialog
 Tk().withdraw() # we don't want a full GUI, so keep the root window from appearing
 filename_SAP = askopenfilename() # show an "Open" dialog box and return the path to the selected file
 # close the dialog
 Tk().destroy()
-# DRIVE ----------------------------------------------------------------------------------------------
-print('Leyendo Drive...')
-try:
-    Drive = pd.read_csv(r"S:\OMNI\HerramientasCode\MappingDiario\Mapping.csv")
-except:
-    print('No se puede acceder a la carpeta S:, revise la conexión a la red')
-    exit()
+# sleep 
+time.sleep(5)
 
+# DRIVE ---------------------------------------------------------------------------
+print('Leyendo Drive...')
+#Drive = pd.read_csv(r"S:\OMNI\HerramientasCode\MappingDiario\Mapping.csv")
+
+path_fotos = r'C:\Users\fcolin\OneDrive - SERVICIOS SHASA S DE RL DE CV\CONNECT'
+nom_items_mapping = os.path.join(path_output, 'Mapping.csv')
+Drive = aux.map_files(path_fotos, saveas=nom_items_mapping)
 Drive.sort_values(by=['creation_date'], ascending=False, inplace=True)
+
 drive = Drive[["sku", "path"]]
 drive = drive.drop_duplicates(subset="sku", keep="first")
 drive.reset_index(drop=True, inplace=True)
@@ -33,9 +38,8 @@ drive["sku"] = drive["sku"].astype(str)
 drive
 # Producto dado de alta en SAP ------------------------------------------------
 print("Leyendo archivo SAP...")
-ProductosSAP = pd.read_csv(filename_SAP, sep=";", header=1)
-#ProductosSAP = pd.read_csv(path_sap_reporte + "\SAP.csv", sep=";", header=1)
-ProductosSAP['code[unique=true]'] = ProductosSAP['code[unique=true]'].str.replace("_", "")
+
+ProductosSAP = pd.read_csv(filename_SAP, sep=";", header=0)
 
 ProductosSAP['len_code'] = ProductosSAP['code[unique=true]'].str.len()
 ProductosSAP = ProductosSAP[ProductosSAP['len_code'] == 13]
@@ -50,7 +54,7 @@ df_sap = ProductosSAP[['sku', 'SAP']]
 df_sap
 
 # INVENTARIOS --------------------------------------------------------------------------------------------
-print("Leyendo base de datos... extrayendo tallas")
+print("Leyendo base de datos... consultando inventarios")
 from sqlalchemy.engine import URL
 from sqlalchemy import create_engine
 import json
@@ -134,11 +138,12 @@ prod_migrar
 
 def crear_excel(df, titulo, header=True):
     if df.empty:
-        print("No hay productos en" , titulo, " :)")
+        print("No hay productos en" , titulo)
     else:
         df.to_excel(path_output + titulo , index=False, header=header)
+
 crear_excel(df, "\ReporteFotos.xlsx")
-crear_excel(migrar, "\Migrar.xlsx", False)
+crear_excel(prod_migrar, "\Migrar.xlsx", False)
 crear_excel(sin_foto, "\SinFotoDriveCONNECT.xlsx")
 crear_excel(subir, "\SubirFoto.xlsx")
 

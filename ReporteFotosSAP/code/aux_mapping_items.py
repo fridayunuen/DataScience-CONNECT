@@ -217,17 +217,11 @@ def map_files(mainpath, saveas):
 path_fotos = r'C:\Users\fcolin\OneDrive - SERVICIOS SHASA S DE RL DE CV\CONNECT'
 
 mapping = os.getcwd()
-#path_out = r'''C:\Users\fcolin\Documents\GitHub\Codigo-IMPEX.V.2\out'''
 path_out = os.path.join(mapping + '\out')
 
 nom_items_mapping = os.path.join(path_out, 'Mapping.csv')
-#nom_items_mapping2 = os.path.join('S:\OMNI\HerramientasCode\MappingDiario', 'Mapping.csv')
-#df = map_files(path_fotos, saveas=nom_items_mapping)
 
-
-
-
-df2 = map_files(path_fotos, saveas=nom_items_mapping)
+#df2 = map_files(path_fotos, saveas=nom_items_mapping)
 
 #print(' - Creando archivo Excel Mapping...')
 #df = pd.read_csv(nom_items_mapping, dtype={'key':str, 'creation_date':str, 'path':str, 'filename':str, 'sku':str, 'suffix':str, 'version':str, 'BU':str})

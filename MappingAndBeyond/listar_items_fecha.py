@@ -3,7 +3,7 @@ import os
 import pandas as pd
 import datetime
 
-path_out = r"S:\BI\15. ALLOCATIONS\12_Mapear_items\V.0.0"
+path_out = os.getcwd()
 
 print('\n' + '-' * 80, 'LISTADO DE ITEMS', '-' * 80)
 

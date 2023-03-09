@@ -102,21 +102,22 @@ engine = create_engine(connection_url)
 conn = engine.connect()
 
 query_items_foto = '''
-SELECT DISTINCT [Original Vendor Item No_] AS [sku], [Original Vendor Item No_], [Item], [Division Code]   ,[Description]
-FROM [Allocations].[dbo].[Item_BC]
+SELECT [Original Vendor Item No_] AS [sku], [Original Vendor Item No_], [Item], [Division Code]   ,[Description]
+FROM [Allocations].[dbo].[Item_BC_v2]
 LEFT JOIN [SH_Reports].[dbo].[Imagenes_File]
 ON SUBSTRING([Item] COLLATE SQL_Latin1_General_CP1_CI_AS , 1, 7) = [Original Vendor Item No_]
-WHERE [No_] != ''  AND [Division Code] NOT IN ('INSUMOS') 
+WHERE --[No_] != ''  AND 
+[Division Code] NOT IN ('INSUMOS') AND [Item] IS NULL 
 
 UNION ALL
 
 SELECT [No_], [Original Vendor Item No_] AS [sku], [Item], [Division Code]   ,[Description]
-FROM [Allocations].[dbo].[Item_BC]
+FROM [Allocations].[dbo].[Item_BC_v2]
 
 LEFT JOIN [SH_Reports].[dbo].[Imagenes_File]
 ON SUBSTRING([Item] COLLATE SQL_Latin1_General_CP1_CI_AS , 1, 7) = [No_]
 
-WHERE [No_] != ''  AND [Division Code] NOT IN ('INSUMOS') 
+WHERE [No_] != ''  AND [Division Code] NOT IN ('INSUMOS') AND [Item] IS NULL  
 
 '''
 

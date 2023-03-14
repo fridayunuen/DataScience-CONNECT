@@ -6,6 +6,7 @@ from tkinter.filedialog import askopenfilename
 import aux_mapping_items as aux
 
 
+
 path = os.getcwd()
 path_input = path.replace("code", "input")
 
@@ -13,14 +14,50 @@ path_contrasenas = r'C:\Users\fcolin\Desktop\input\CredencialesConnect.json'
 #path_sap_reporte = r'S:\OMNI\HerramientasCode\MappingDiario\input'
 path_code = os.getcwd()
 path_output = path_code.replace("code", "output")
-# select a file with an interactive dialog
 
-Tk().withdraw() # we don't want a full GUI, so keep the root window from appearing
-filename_SAP = askopenfilename() # show an "Open" dialog box and return the path to the selected file
-# close the dialog
+
+# Producto dado de alta en SAP ------------------------------------------------
+print("Leyendo archivo SAP...")
+
+Tk().withdraw() 
+filename_SAP = askopenfilename() 
 Tk().destroy()
-# sleep 
 time.sleep(5)
+
+ProductosSAP = pd.read_csv(filename_SAP, sep=";", header=0)
+
+ProductosSAP['code[unique=true]'] = ProductosSAP['code[unique=true]'].str.replace("_", "")
+ProductosSAP['len_code'] = ProductosSAP['code[unique=true]'].str.len()
+
+#ProductosSAP[ProductosSAP['sku'] == '2109645051']
+ProductosSAP
+
+ProductosSAP['sku'] = ProductosSAP['code[unique=true]'].str[:10]
+
+# Vamos a detectar los productos que tienen 10 digitos
+dig10 = ProductosSAP[['sku', 'len_code']]
+dig10 = dig10.sort_values(by=['len_code'], ascending=False)
+dig10 = dig10.drop_duplicates(subset="sku", keep="first")
+dig10 = dig10[dig10['len_code'] == 10]
+dig10
+
+
+dig10.drop_duplicates(subset="sku", keep="first")
+#dig10 = dig10[dig10['len_code'] == 10]
+dig10['len_code'].value_counts()
+
+
+ProductosSAP = ProductosSAP[ProductosSAP['len_code'] == 13]
+
+ProductosSAP.drop_duplicates(subset="sku", keep="first", inplace=True)
+ProductosSAP
+ProductosSAP[~ProductosSAP['picture(code)[collection-delimiter=|]'].isna()]
+# crear una nueva columna en la que si no tiene foto, ponga "Sin foto"
+ProductosSAP['SAP'] = ProductosSAP['picture(code)[collection-delimiter=|]'].apply(lambda x: "Sin foto" if pd.isna(x) else "Con foto")
+df_sap = ProductosSAP[['sku', 'SAP']]
+df_sap
+
+
 
 # DRIVE ---------------------------------------------------------------------------
 print('Leyendo Drive...')
@@ -36,25 +73,10 @@ drive = drive.drop_duplicates(subset="sku", keep="first")
 drive.reset_index(drop=True, inplace=True)
 drive["sku"] = drive["sku"].astype(str)
 drive
-# Producto dado de alta en SAP ------------------------------------------------
-print("Leyendo archivo SAP...")
 
-ProductosSAP = pd.read_csv(filename_SAP, sep=";", header=0)
-
-ProductosSAP['len_code'] = ProductosSAP['code[unique=true]'].str.len()
-ProductosSAP = ProductosSAP[ProductosSAP['len_code'] == 13]
-ProductosSAP['sku'] = ProductosSAP['code[unique=true]'].str[:10]
-ProductosSAP.drop_duplicates(subset="sku", keep="first", inplace=True)
-ProductosSAP
-ProductosSAP[~ProductosSAP['picture(code)[collection-delimiter=|]'].isna()]
-# crear una nueva columna en la que si no tiene foto, ponga "Sin foto"
-ProductosSAP['SAP'] = ProductosSAP['picture(code)[collection-delimiter=|]'].apply(lambda x: "Sin foto" if pd.isna(x) else "Con foto")
-
-df_sap = ProductosSAP[['sku', 'SAP']]
-df_sap
 
 # INVENTARIOS --------------------------------------------------------------------------------------------
-print("Leyendo base de datos... consultando inventarios")
+print("Leyendo base de datos... ")
 from sqlalchemy.engine import URL
 from sqlalchemy import create_engine
 import json
@@ -116,26 +138,29 @@ df['Total'] = df['Total'].astype(int)
 df = df[df['Total']>0]
 df = pd.merge(df, drive, on="sku", how="left")
 df
-df = df[df['SAP'] != 'Con foto']
-sin_foto = df[df['path'].isna()]
-sin_foto
+df[df['sku'].isin(dig10['sku'])] # Productos con inventario a 10 digitos
+if len(dig10)>0:
+    df = df[~df['sku'].isin(dig10['sku'])]
+df['Padre'] = df['sku'].str[:7]
 
-# fotos que no estan en SAP, necesita crearse un archivo para migrar
 migrar = df[(df['SAP'].isna()) & (~df['path'].isna())]
-subir = df[(~df['SAP'].isna()) & (~df['path'].isna())]
-subir
+migrar.drop_duplicates(subset="Padre", keep="first")
 
-sin_foto.reset_index(drop=True, inplace=True)
-migrar
-prod_migrar = migrar['sku'].str[:7].unique()
+prod_migrar = migrar['Padre'].str[:7].unique()
 prod_migrar = pd.DataFrame(prod_migrar)
 prod_migrar['E-COMMERCE'] = 'E-COMMERCE'
+prod_migrar.columns = ['sku', 'E-COMMERCE']
+
+# elimniar de prod migrar si sku esta en df_sap
+prod_migrar = prod_migrar[~prod_migrar['sku'].isin(df_sap['sku'].str[:7])]
+# Dado de alta en SAP sin foto en Drive
+sin_foto = df[(df['SAP'] == 'Sin foto') & (df['path'].isna())] 
+
+# Fotos listas para subir a SAP
+subir = df[(df['SAP'] == 'Sin foto') & (~df['path'].isna())] 
+
+# Fotos para subir a BC
 prod_migrar
-
-#prod_migrar.to_excel(path_output + "\Migrar.xlsx", index=False, header=False)
-#sin_foto.to_excel(path_output + "\SinFotoDriveCONNECT.xlsx", index=False)
-#subir.to_excel(path_output + "\SubirFoto.xlsx", index=False)
-
 def crear_excel(df, titulo, header=True):
     if df.empty:
         print("No hay productos en" , titulo)

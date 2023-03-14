@@ -4,6 +4,8 @@ import pandas as pd
 import datetime
 
 path_out = os.getcwd()
+path_out = os.path.join(path_out, 'out')
+
 
 print('\n' + '-' * 80, 'LISTADO DE ITEMS', '-' * 80)
 
@@ -105,8 +107,10 @@ def list_items_in_folder(txt_path='path.txt'):
 
     # saves the items and dates in a csv file called items_dates.csv
     df = pd.DataFrame({'item': ls_items, 'date': ls_dates})
-    file_out = os.path.join(path_out + '\items_dates.csv')
-    df.to_csv(file_out, index=False)
+    #file_out = os.path.join(path_out + '\items_dates.csv')
+    file_out = os.path.join(path_out + '\items_dates.xlsx')
+    #df.to_csv(file_out, index=False)
+    df.to_excel(file_out, index=False)
     print('Se guardaron los items y fechas en el archivo items_dates.csv')
     
 

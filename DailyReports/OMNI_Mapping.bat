@@ -1,1 +1,2 @@
+python aux_mapping_items.py
 python listar_items_fecha.py

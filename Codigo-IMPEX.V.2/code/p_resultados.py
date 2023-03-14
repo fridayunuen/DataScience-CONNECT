@@ -1,14 +1,14 @@
 import os
 import pandas as pd
 
-try:
+'''try:
     
     pd.read_excel(r'S:\OMNI\HerramientasCode\MappingDiario\Reportes\ProductosGeneradosImpex.xlsx')
     print('Reporte historico existe')
 except:
     print('Conecta tu VPN o asegurate que el reporte de ProductosGeneradosImpex.xlsx se encuentre cerrado')
     exit()
-
+'''
 
 import impex 
 import V_Imagenes as vi
@@ -55,12 +55,12 @@ import getpass
 user = getpass.getuser()
 reporte.loc[:,'Equipo'] = user
 
-historico = pd.read_excel(r'S:\OMNI\HerramientasCode\MappingDiario\Reportes\ProductosGeneradosImpex.xlsx')
+'''historico = pd.read_excel(r'S:\OMNI\HerramientasCode\MappingDiario\Reportes\ProductosGeneradosImpex.xlsx')
 historico = pd.concat([historico, reporte], ignore_index=True)
 historico.sort_values(by=['DateUpload'], inplace=True, ascending=False)
 historico = historico.drop_duplicates(subset=['sku'], keep='first')
 historico.to_excel(r'S:\OMNI\HerramientasCode\MappingDiario\Reportes\ProductosGeneradosImpex.xlsx', index=False)
-
+'''
 if len(ItemsNoGenerados) > 0:
     ItemsNoGenerados.to_excel("ItemsNoGenerados.xlsx", index=False)
     print("Revisar ItemsNoGenerados.xlsx")

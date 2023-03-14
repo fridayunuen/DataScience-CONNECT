@@ -2,6 +2,9 @@
 import os
 import datetime
 import pandas as pd
+from PIL import Image
+
+#import Directory as Dir
 
 def ptitle(string):
     '''This function prints a title.'''
@@ -105,20 +108,6 @@ def extract_version(string):
         version = '0'
     return version
 
-def extract_type_file(string):
-    '''
-    This function extracts the type of file of a string.
-    type_file is defined as the string after the last '.' in the string.
-    '''
-    type_file = ''
-    try:
-        position_last_dot = string.rfind('.')
-        type_file = string[position_last_dot+1:]
-    except:
-        type_file = ''
-    return type_file
-
-
 def separate_filename_path(string):
     '''
     This function separates the filename and the path of a string.
@@ -152,6 +141,19 @@ def list_items_in_directory(mainpath):
             if item != '0' and item not in items:
                 items.append(item)
     return items
+import numpy as np
+
+def get_width_height(path):
+    '''
+    This function returns the width and height of an image.
+    '''
+    try:
+        img = Image.open(path)
+        width, height = img.size
+    except:
+        width, height = 0, 0
+    return width, height
+
 
 def map_files(mainpath, saveas):
     '''
@@ -160,14 +162,16 @@ def map_files(mainpath, saveas):
     '''
     ptitle('  Mapeando archivos de fotos')
     nfiles = count_files(mainpath)
-    ls_filefullnames, ls_filenames, ls_paths, ls_creation_dates, ls_skus, ls_suffixes, ls_versions = [], [], [], [], [], [], []
-    ls_type = []
+    #ls_filefullnames, ls_filenames, ls_paths, ls_creation_dates, ls_skus, ls_suffixes, ls_versions, width, length = [], [], [], [], [], [], [], [], []
+    ls_filefullnames, ls_filenames, ls_paths, ls_creation_dates, ls_skus, ls_suffixes, ls_versions, ls_type, width, length  = [], [], [], [], [], [], [], [], [], []
     f = 0
     for root, dirs, files in os.walk(mainpath):
         
+  
+
         for file in files:
             f += 1
-            loading(f, nfiles)
+            #loading(f, nfiles)
             ls_filefullnames.append(os.path.join(root, file))
             filename, path = separate_filename_path(os.path.join(root, file))
             ls_filenames.append(filename)
@@ -176,61 +180,33 @@ def map_files(mainpath, saveas):
             ls_skus.append(extract_sku(file))
             ls_suffixes.append(extract_suffix(file))
             ls_versions.append(extract_version(file))
-            ls_type.append(extract_type_file(file))
+            # type of file
+            ls_type.append(file.split('.')[-1])
+            # width and length of image
+            width.append(get_width_height(os.path.join(root, file))[0])
+            length.append(get_width_height(os.path.join(root, file))[1])
+              
+
+
     ls_paths = [path[len(mainpath):] for path in ls_paths]
     ls_creation_dates = [datetime.datetime.fromtimestamp(x) for x in ls_creation_dates]
-
-    ptitle('  Mapeando archivos de fotos')
-    print(' - Items escaneados correctamente')
-    print(' - Guardando archivo de mapeo de items...')
-    dic_files = {'filefullname':ls_filefullnames, 'filename':ls_filenames, 'path':ls_paths, 'creation_date':ls_creation_dates, 'sku':ls_skus, 'suffix':ls_suffixes, 'version':ls_versions, 'type':ls_type}
+    dic_files = {'filefullname':ls_filefullnames, 'filename':ls_filenames, 'path':ls_paths, 'creation_date':ls_creation_dates, 'sku':ls_skus, 'suffix':ls_suffixes, 'version':ls_versions, 'type':ls_type, 'width':width, 'length':length}
     df_files = pd.DataFrame(dic_files)
     df_files['key'] = df_files['sku'] + '_' + df_files['suffix']
-    df_files['ropa'] = df_files['path'].apply(lambda x: find_bu_in_string(x, 'ropa'))
-    df_files['calzado'] = df_files['path'].apply(lambda x: find_bu_in_string(x, 'calz'))
-    df_files['accesorios'] = df_files['path'].apply(lambda x: find_bu_in_string(x, 'acces'))
-    df_files['rca'] = df_files.apply(lambda x: x['ropa'] + x['calzado'] + x['accesorios'], axis=1)
-    df_files['BU'] = df_files.apply(lambda x: find_unique_bu(x), axis=1)
+    #df_files['ropa'] = df_files['path'].apply(lambda x: find_bu_in_string(x, 'ropa'))
+    #df_files['calzado'] = df_files['path'].apply(lambda x: find_bu_in_string(x, 'calz'))
+    #df_files['accesorios'] = df_files['path'].apply(lambda x: find_bu_in_string(x, 'acces'))
+    #df_files['rca'] = df_files.apply(lambda x: x['ropa'] + x['calzado'] + x['accesorios'], axis=1)
+    #df_files['BU'] = df_files.apply(lambda x: find_unique_bu(x), axis=1)
 
-
-    ls_cols = ['sku', 'creation_date', 'path', 'filename', 'type','key',  'suffix', 'version']
-    # Limpiando mapping
-    
-    #df_files = df_files[['sku', 'creation_date', 'path', 'filename', 'key',  'suffix', 'version']]
-    
+    ls_cols = ['key', 'creation_date', 'path', 'filename', 'sku', 'suffix', 'version', 'type', 'width', 'length']
     df_files = df_files[ls_cols]
-    # order by creation date
-
-
-    df_files = df_files.sort_values(by=['creation_date'], ascending=False)
-    df_files = df_files[df_files['sku'] != '0'].reset_index(drop=True)
-
     df_files.to_csv(saveas, index=False)
     print(' - Se han guardado los items en el archivo ' + saveas)
     ptitle('  Mapeo concluído')
 
-
     return df_files
 
 
-#path_fotos = open('path.txt', 'r').readline()
-path_fotos = r'C:\Users\fcolin\OneDrive - SERVICIOS SHASA S DE RL DE CV\CONNECT'
+ 
 
-mapping = os.getcwd()
-#path_out = r'''C:\Users\fcolin\Documents\GitHub\Codigo-IMPEX.V.2\out'''
-path_out = os.path.join(mapping + '\out')
-
-nom_items_mapping = os.path.join(path_out, 'Mapping.csv')
-#nom_items_mapping2 = os.path.join('S:\OMNI\HerramientasCode\MappingDiario', 'Mapping.csv')
-#df = map_files(path_fotos, saveas=nom_items_mapping)
-
-
-
-
-df2 = map_files(path_fotos, saveas=nom_items_mapping)
-
-#print(' - Creando archivo Excel Mapping...')
-#df = pd.read_csv(nom_items_mapping, dtype={'key':str, 'creation_date':str, 'path':str, 'filename':str, 'sku':str, 'suffix':str, 'version':str, 'BU':str})
-
-#os.chdir(path_out)
-#pd.DataFrame(df).to_excel("Mapping.xlsx",   index=False)
